@@ -109,7 +109,7 @@ jobs:
 
     - name: Upload Lighthouse report
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: lighthouse-accessibility-report
         path: .a11y-test/lighthouse-report.*
