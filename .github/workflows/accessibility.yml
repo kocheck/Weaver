@@ -1,0 +1,275 @@
+name: Accessibility Checks
+
+on:
+  push:
+    branches: [ main, master, develop, claude/** ]
+    paths:
+      - 'src/**/*.html'
+      - 'src/**/*.js'
+      - '.github/workflows/accessibility.yml'
+  pull_request:
+    branches: [ main, master, develop ]
+    paths:
+      - 'src/**/*.html'
+      - 'src/**/*.js'
+
+jobs:
+  accessibility:
+    name: Accessibility Testing
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install accessibility testing tools
+      run: |
+        npm install -g pa11y-ci lighthouse-ci @axe-core/cli
+        npm install --save-dev axe-core pa11y htmlhint
+
+    - name: Create test HTML server directory
+      run: mkdir -p .a11y-test
+
+    - name: Copy UI files for testing
+      run: cp src/ui.html .a11y-test/index.html
+
+    - name: Start HTTP server for testing
+      run: |
+        npx http-server .a11y-test -p 8080 &
+        sleep 3
+
+    - name: Run HTMLHint
+      run: npx htmlhint src/**/*.html
+      continue-on-error: true
+
+    - name: Run Pa11y accessibility tests
+      run: |
+        npx pa11y http://localhost:8080/index.html \
+          --standard WCAG2AA \
+          --reporter cli \
+          --threshold 5
+      continue-on-error: true
+
+    - name: Run axe-core accessibility tests
+      run: |
+        npx axe http://localhost:8080/index.html \
+          --tags wcag2a,wcag2aa,wcag21a,wcag21aa \
+          --exit
+      continue-on-error: true
+
+    - name: Create pa11y configuration
+      run: |
+        cat > .pa11yci.json << 'EOF'
+        {
+          "defaults": {
+            "standard": "WCAG2AA",
+            "timeout": 10000,
+            "wait": 1000,
+            "chromeLaunchConfig": {
+              "args": ["--no-sandbox", "--disable-setuid-sandbox"]
+            }
+          },
+          "urls": [
+            "http://localhost:8080/index.html"
+          ]
+        }
+        EOF
+
+    - name: Run pa11y-ci with configuration
+      run: npx pa11y-ci
+      continue-on-error: true
+
+    - name: Generate Lighthouse accessibility report
+      run: |
+        npx lighthouse http://localhost:8080/index.html \
+          --only-categories=accessibility \
+          --output=html \
+          --output=json \
+          --output-path=./.a11y-test/lighthouse-report \
+          --chrome-flags="--headless --no-sandbox"
+      continue-on-error: true
+
+    - name: Check Lighthouse accessibility score
+      run: |
+        SCORE=$(cat .a11y-test/lighthouse-report.report.json | jq '.categories.accessibility.score * 100')
+        echo "Accessibility score: $SCORE"
+        if (( $(echo "$SCORE < 90" | bc -l) )); then
+          echo "::warning::Accessibility score is below 90: $SCORE"
+        fi
+      continue-on-error: true
+
+    - name: Upload Lighthouse report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: lighthouse-accessibility-report
+        path: .a11y-test/lighthouse-report.*
+        retention-days: 30
+
+    - name: Analyze HTML structure
+      run: |
+        echo "Checking for accessibility best practices..."
+
+        # Check for alt attributes on images
+        if grep -r '<img' src/ | grep -v 'alt='; then
+          echo "::warning::Images without alt attributes found"
+        fi
+
+        # Check for semantic HTML5 elements
+        if ! grep -qr '<main\|<nav\|<header\|<footer\|<article\|<section' src/*.html; then
+          echo "::warning::Consider using semantic HTML5 elements"
+        fi
+
+        # Check for aria-label or labels on form inputs
+        if grep -r '<input' src/ | grep -v 'aria-label\|<label'; then
+          echo "::warning::Form inputs without labels found"
+        fi
+
+        # Check for heading hierarchy
+        echo "Checking heading hierarchy..."
+        grep -roh '<h[1-6]' src/*.html | sort | uniq -c || true
+
+        # Check for color contrast issues (basic check)
+        if grep -ri 'color.*#[0-9a-f]*' src/*.html; then
+          echo "::notice::Manual color contrast check recommended"
+        fi
+
+    - name: Comment accessibility report on PR
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs');
+          const reportPath = '.a11y-test/lighthouse-report.report.json';
+
+          if (fs.existsSync(reportPath)) {
+            const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+            const score = Math.round(report.categories.accessibility.score * 100);
+            const audits = report.audits;
+
+            let comment = `## ♿ Accessibility Report\n\n`;
+            comment += `**Score:** ${score}/100\n\n`;
+
+            const failed = Object.values(audits).filter(a =>
+              a.score !== null && a.score < 1 && a.scoreDisplayMode !== 'notApplicable'
+            );
+
+            if (failed.length > 0) {
+              comment += `### Issues Found (${failed.length})\n\n`;
+              failed.slice(0, 5).forEach(audit => {
+                comment += `- **${audit.title}:** ${audit.description}\n`;
+              });
+
+              if (failed.length > 5) {
+                comment += `\n*...and ${failed.length - 5} more issues*\n`;
+              }
+            } else {
+              comment += `✅ No accessibility issues found!\n`;
+            }
+
+            comment += `\n[View full report in artifacts](${context.payload.pull_request.html_url}/checks)`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+          }
+
+  color-contrast:
+    name: Color Contrast Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+
+    - name: Install color contrast checker
+      run: npm install -g color-contrast-checker
+
+    - name: Extract and check colors from CSS
+      run: |
+        echo "Analyzing color combinations in UI..."
+
+        # Extract colors from HTML
+        grep -oE '#[0-9a-fA-F]{3,6}|rgb\([^)]+\)|rgba\([^)]+\)' src/ui.html | sort | uniq
+
+        # Common combinations to check manually
+        echo "::notice::Please manually verify color contrast ratios:"
+        echo "  - Text on backgrounds must have 4.5:1 ratio (normal text)"
+        echo "  - Text on backgrounds must have 3:1 ratio (large text 18pt+)"
+        echo "  - Use tools like WebAIM Contrast Checker"
+
+    - name: Check ARIA attributes usage
+      run: |
+        echo "Checking ARIA attributes..."
+
+        # Check for proper ARIA usage
+        if grep -r 'aria-' src/*.html; then
+          echo "✓ ARIA attributes found"
+          grep -oh 'aria-[a-z]*' src/*.html | sort | uniq -c
+        else
+          echo "::warning::No ARIA attributes found - consider adding for better accessibility"
+        fi
+
+        # Check for role attributes
+        if grep -r 'role=' src/*.html; then
+          echo "✓ Role attributes found"
+        fi
+
+  keyboard-navigation:
+    name: Keyboard Navigation Check
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Check for keyboard navigation support
+      run: |
+        echo "Analyzing keyboard navigation support..."
+
+        # Check for tabindex usage
+        if grep -r 'tabindex' src/*.html; then
+          echo "✓ tabindex attributes found"
+          grep -oh 'tabindex="[^"]*"' src/*.html
+        else
+          echo "::notice::No tabindex found - ensure natural tab order is logical"
+        fi
+
+        # Check for keyboard event handlers
+        if grep -rE 'onkeydown|onkeyup|onkeypress' src/*.html src/*.js; then
+          echo "✓ Keyboard event handlers found"
+        else
+          echo "::warning::No keyboard event handlers - ensure all interactions work with keyboard"
+        fi
+
+        # Check for focus styles
+        if grep -rE ':focus|outline' src/*.html; then
+          echo "✓ Focus styles defined"
+        else
+          echo "::warning::No focus styles found - add visible focus indicators"
+        fi
+
+        # Check for skip links
+        if grep -ri 'skip.*main\|skip.*content' src/*.html; then
+          echo "✓ Skip links found"
+        else
+          echo "::notice::Consider adding skip links for keyboard users"
+        fi
