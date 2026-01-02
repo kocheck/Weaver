@@ -1,8 +1,11 @@
 /**
- * LocalMock Data - Main Plugin Commands
+ * Weaver - Main Plugin Commands
  *
  * This file contains the main command handlers for the Sketch plugin.
  * It coordinates between the UI, LLM client, and data injection utilities.
+ *
+ * Weaver weaves realistic data into your Sketch designs using local AI.
+ * Local-first architecture - works offline, no internet required.
  */
 
 import sketch from 'sketch';
@@ -11,7 +14,7 @@ import { extractVariableNames, validateLayers } from './utils/layerTraversal';
 import { generateMockData, testConnection } from './utils/llmClient';
 import { injectData, previewInjection } from './utils/dataInjector';
 
-const SETTINGS_KEY = 'com.localmock.sketch.settings';
+const SETTINGS_KEY = 'com.weaver.sketch.settings';
 
 /**
  * Sanitize error message for user display
@@ -168,12 +171,12 @@ export function onGenerateMockData(context) {
 
   // Create and show WebView window
   const options = {
-    identifier: 'localmock.webview',
+    identifier: 'weaver.webview',
     width: 600,
     height: 700,
     show: false,
     resizable: true,
-    title: 'LocalMock Data Generator',
+    title: 'Weaver Data Generator',
     minimizable: false,
     maximizable: false,
     alwaysOnTop: true

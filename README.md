@@ -1,6 +1,6 @@
-# LocalMock Data - Sketch Plugin
+# Weaver - Sketch Plugin
 
-> Generate realistic mock data for your Sketch designs using local AI (Llama 3 via Ollama)
+> Weave realistic data into your Sketch designs using local AI - powered by Ollama, no internet required
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![Sketch](https://img.shields.io/badge/sketch-70%2B-orange)
@@ -8,16 +8,17 @@
 
 ## 🎯 Overview
 
-LocalMock Data is a Sketch plugin that leverages local LLM (Large Language Model) technology to generate contextual, realistic mock data for your designs. Instead of manually typing placeholder text or using random lorem ipsum, you can now generate creative, context-aware content that matches your design needs.
+Weaver is a Sketch plugin that weaves contextual, realistic data into your designs using local AI. Like a weaver crafting intricate patterns, this plugin seamlessly integrates AI-generated content into your design layers - all running locally on your machine via Ollama. No internet connection, no API keys, no cloud services - just you, your designs, and your local LLM working together.
 
 ### Key Features
 
-- 🤖 **Local AI Integration** - Uses Ollama (Llama 3) running locally, no API keys or cloud services required
-- 🎨 **Smart Layer Mapping** - Automatically detects and populates layers named with variable syntax (e.g., `$cardTitle`, `$price`)
+- 🏠 **Local-First Architecture** - Uses Ollama running locally, works offline, no API keys or cloud services required
+- 🧵 **Smart Layer Weaving** - Automatically detects and populates layers named with variable syntax (e.g., `$cardTitle`, `$price`)
 - 🔄 **Symbol Override Support** - Works with both text layers and symbol instance overrides
 - 🎭 **Contextual Generation** - Provide natural language prompts to generate themed, realistic data
-- ⚡ **Fast & Private** - Everything runs locally on your machine
+- 🔒 **Private & Secure** - Everything runs on your machine, your data never leaves your computer
 - 🧪 **Fully Tested** - Comprehensive test suite ensures reliability
+- ✈️ **Offline-Ready** - Perfect for working on flights, in cafes, or anywhere without internet
 
 ## 📋 Prerequisites
 
@@ -45,7 +46,7 @@ Before installing the plugin, you need to have Ollama installed and running:
 
 ### Option 1: From Release (Recommended)
 
-1. Download the latest `localmock-data.sketchplugin` from the [Releases](https://github.com/username/localmock-sketch-plugin/releases) page
+1. Download the latest `weaver.sketchplugin` from the [Releases](https://github.com/kocheck/Weaver/releases) page
 2. Double-click the file to install
 3. Sketch will automatically install the plugin
 
@@ -53,8 +54,8 @@ Before installing the plugin, you need to have Ollama installed and running:
 
 ```bash
 # Clone the repository
-git clone https://github.com/username/localmock-sketch-plugin.git
-cd localmock-sketch-plugin
+git clone https://github.com/kocheck/Weaver.git
+cd Weaver
 
 # Install dependencies
 npm install
@@ -86,7 +87,7 @@ npm run link
 
 3. **Open the Plugin**
 
-   - **Menu:** Plugins → LocalMock Data → Generate Mock Data
+   - **Menu:** Plugins → Weaver → Generate Mock Data
    - **Keyboard:** `Ctrl + Shift + M`
 
 4. **Configure Generation**
@@ -239,7 +240,7 @@ npm run test:watch
 npm run build
 ```
 
-Output: `localmock-data.sketchplugin`
+Output: `weaver.sketchplugin`
 
 ### Development Mode
 
@@ -254,7 +255,7 @@ Automatically rebuilds the plugin on file changes.
 ### Project Structure
 
 ```
-localmock-sketch-plugin/
+Weaver/
 ├── src/
 │   ├── my-command.js              # Main plugin entry point
 │   ├── ui.html                    # WebView UI
@@ -350,10 +351,14 @@ MIT License - see [LICENSE](LICENSE) file for details
 
 ## 🙏 Acknowledgments
 
-- **Ollama** - For making local LLM inference accessible
-- **Meta** - For Llama 3
-- **Sketch** - For the excellent plugin API
+- **Ollama** - For making local-first LLM inference accessible and empowering offline workflows
+- **Meta** - For Llama 3 and advancing open-source AI
+- **Sketch** - For the excellent plugin API and supporting the design community
 - **skpm** - For the Sketch plugin development framework
+
+## 🧵 Why "Weaver"?
+
+Just as a weaver interlaces threads to create intricate fabrics, this plugin weaves AI-generated data into your design layers, creating rich, contextual content. The name also emphasizes our **local-first philosophy** - like a traditional weaver working at their loom, you have complete control and ownership, with no dependence on external services or internet connectivity.
 
 ## 📧 Support
 
@@ -365,10 +370,11 @@ MIT License - see [LICENSE](LICENSE) file for details
 - [ ] Support for image generation (layer fills)
 - [ ] Multiple data variants (generate sets)
 - [ ] Custom model fine-tuning
-- [ ] Cloud LLM provider support (OpenAI, Anthropic)
+- [ ] Optional cloud LLM provider support (for when you DO have internet)
 - [ ] Data templates library
 - [ ] Batch processing for multiple artboards
+- [ ] Improved offline model management
 
 ---
 
-**Made with ❤️ for the Sketch community**
+**Made with ❤️ for the Sketch community | Local-first, privacy-focused, always offline-ready**

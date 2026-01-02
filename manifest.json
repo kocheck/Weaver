@@ -1,9 +1,9 @@
 {
-  "name": "LocalMock Data",
-  "description": "Populate Sketch layers with AI-generated mock data using local Ollama LLM",
-  "author": "LocalMock Team",
+  "name": "Weaver",
+  "description": "Weave realistic data into your Sketch designs using local AI - powered by Ollama, works offline",
+  "author": "Weaver Team",
   "version": "1.0.0",
-  "identifier": "com.localmock.sketch.plugin",
+  "identifier": "com.weaver.sketch.plugin",
   "appcast": "https://raw.githubusercontent.com/kocheck/Weaver/master/.appcast.xml",
   "compatibleVersion": "70",
   "bundleVersion": 1,
@@ -17,17 +17,17 @@
       "shortcut": "ctrl shift m"
     },
     {
-      "name": "Configure LocalMock",
-      "identifier": "configure-localmock",
+      "name": "Configure Weaver",
+      "identifier": "configure-weaver",
       "script": "src/my-command.js",
       "handler": "onConfigure"
     }
   ],
   "menu": {
-    "title": "LocalMock Data",
+    "title": "Weaver",
     "items": [
       "generate-mock-data",
-      "configure-localmock"
+      "configure-weaver"
     ]
   }
 }
