@@ -248,7 +248,7 @@ export function onGenerateMockData(context) {
     } catch (error) {
       console.error('Error generating mock data:', error);
 
-      const sanitizedMessage = sanitizeErrorMessage(error.message);
+      const sanitizedMessage = sanitizeErrorMessage(error.message || 'An error occurred');
 
       browserWindow.webContents.executeJavaScript(
         `window.setLoadingState(false); window.showError(${JSON.stringify(sanitizedMessage)})`
@@ -271,7 +271,7 @@ export function onGenerateMockData(context) {
       );
 
     } catch (error) {
-      const sanitizedMessage = sanitizeErrorMessage(error.message);
+      const sanitizedMessage = sanitizeErrorMessage(error.message || 'Connection failed');
       
       browserWindow.webContents.executeJavaScript(
         `window.showConnectionStatus(${JSON.stringify({

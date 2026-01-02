@@ -595,8 +595,8 @@
         prompt: document.getElementById('prompt').value,
         endpoint: document.getElementById('endpoint').value,
         model: document.getElementById('model').value,
-        temperature: parseFloat(document.getElementById('temperature').value) || 0.7,
-        topP: parseFloat(document.getElementById('top-p').value) || 0.9
+        temperature: parseFloat(document.getElementById('temperature').value || '0.7'),
+        topP: parseFloat(document.getElementById('top-p').value || '0.9')
       };
 
       window.postMessage('generate', config);
