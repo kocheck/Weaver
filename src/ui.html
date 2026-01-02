@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LocalMock Data Generator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 24px;
+    }
+
+    .section {
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      background: #667eea;
+      color: white;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #555;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus,
+    input[type="url"]:focus,
+    input[type="number"]:focus,
+    textarea:focus,
+    select:focus,
+    button:focus {
+      outline: 3px solid #667eea;
+      outline-offset: 2px;
+      border-color: #667eea;
+    }
+
+    /* Skip link for accessibility */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: #667eea;
+      color: white;
+      padding: 8px 16px;
+      text-decoration: none;
+      border-radius: 0 0 4px 0;
+      z-index: 100;
+    }
+
+    .skip-link:focus {
+      top: 0;
+    }
+
+    /* Screen reader only text */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    .variables-list {
+      background: #f5f5f5;
+      padding: 12px;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .results {
+      display: none;
+      margin-top: 20px;
+      padding: 16px;
+      background: #e8f5e9;
+      border-left: 4px solid #4caf50;
+      border-radius: 6px;
+    }
+
+    .results.active {
+      display: block;
+    }
+
+    .results.error {
+      background: #ffebee;
+      border-left-color: #f44336;
+    }
+
+    .results-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #2e7d32;
+    }
+
+    .results.error .results-title {
+      color: #c62828;
+    }
+
+    .results-content {
+      font-size: 13px;
+      color: #555;
+    }
+
+    .advanced {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .advanced-toggle {
+      background: none;
+      border: none;
+      color: #667eea;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+    }
+
+    .advanced-content {
+      display: none;
+      margin-top: 12px;
+    }
+
+    .advanced-content.active {
+      display: block;
+    }
+
+    .connection-status {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-left: 8px;
+    }
+
+    .connection-status.connected {
+      background: #4caf50;
+    }
+
+    .connection-status.disconnected {
+      background: #f44336;
+    }
+
+    .connection-status.testing {
+      background: #ff9800;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <div class="container" role="main">
+    <header class="header" role="banner">
+      <h1>🎨 LocalMock Data</h1>
+      <p>Generate realistic mock data using local AI</p>
+    </header>
+
+    <main class="content" id="main-content">
+      <section class="section" aria-labelledby="variables-heading">
+        <h2 class="section-title" id="variables-heading">
+          Detected Variables
+          <span class="badge" id="variable-count" aria-label="Variable count">0</span>
+        </h2>
+        <div class="variables-list" id="variables-list" role="status" aria-live="polite">
+          No variables detected
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="config-heading">
+        <h2 class="section-title" id="config-heading">Configuration</h2>
+
+        <form id="config-form">
+          <div class="input-group">
+            <label for="json-keys">JSON Keys (comma-separated)</label>
+            <input
+              type="text"
+              id="json-keys"
+              name="jsonKeys"
+              placeholder="e.g., cardTitle, description, price"
+              aria-describedby="json-keys-hint"
+              required
+            />
+            <p class="hint" id="json-keys-hint">These will be matched to your layer variable names</p>
+          </div>
+
+          <div class="input-group">
+            <label for="prompt">Context Prompt</label>
+            <textarea
+              id="prompt"
+              name="prompt"
+              placeholder="e.g., Menu items for a cyberpunk noodle bar in Tokyo"
+              aria-describedby="prompt-hint"
+              required
+            ></textarea>
+            <p class="hint" id="prompt-hint">Describe what kind of data you want to generate</p>
+          </div>
+
+          <div class="advanced">
+            <button
+              type="button"
+              class="advanced-toggle"
+              aria-expanded="false"
+              aria-controls="advanced-content"
+              id="advanced-toggle-btn"
+            >
+              ⚙️ Advanced Settings
+            </button>
+            <div class="advanced-content" id="advanced-content" aria-hidden="true">
+              <div class="input-group">
+                <label for="endpoint">
+                  Ollama Endpoint
+                  <span
+                    class="connection-status"
+                    id="connection-status"
+                    role="status"
+                    aria-label="Connection status"
+                  ></span>
+                </label>
+                <input
+                  type="url"
+                  id="endpoint"
+                  name="endpoint"
+                  value="http://localhost:11434/api/generate"
+                  aria-describedby="endpoint-hint"
+                />
+                <p class="hint" id="endpoint-hint">URL of your local Ollama instance</p>
+                <button
+                  type="button"
+                  class="btn-secondary"
+                  id="test-connection-btn"
+                  style="margin-top: 8px;"
+                  aria-label="Test connection to Ollama server"
+                >
+                  Test Connection
+                </button>
+              </div>
+
+              <div class="input-group">
+                <label for="model">Model</label>
+                <input
+                  type="text"
+                  id="model"
+                  name="model"
+                  value="llama3"
+                  aria-describedby="model-hint"
+                />
+                <p class="hint" id="model-hint">Default: llama3</p>
+              </div>
+
+              <div class="input-group">
+                <label for="temperature">Temperature</label>
+                <input
+                  type="number"
+                  id="temperature"
+                  name="temperature"
+                  value="0.7"
+                  min="0"
+                  max="2"
+                  step="0.1"
+                  aria-describedby="temperature-hint"
+                />
+                <p class="hint" id="temperature-hint">Controls randomness (0-2, default: 0.7)</p>
+              </div>
+
+              <div class="input-group">
+                <label for="top-p">Top P</label>
+                <input
+                  type="number"
+                  id="top-p"
+                  name="topP"
+                  value="0.9"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  aria-describedby="top-p-hint"
+                />
+                <p class="hint" id="top-p-hint">Nucleus sampling threshold (0-1, default: 0.9)</p>
+              </div>
+            </div>
+          </div>
+
+      <div class="button-group" role="group" aria-label="Action buttons">
+        <button
+          type="button"
+          class="btn-secondary"
+          id="preview-btn"
+          aria-label="Preview data injection without generating"
+        >
+          <span aria-hidden="true">👁️</span> Preview
+        </button>
+        <button
+          type="submit"
+          class="btn-primary"
+          id="generate-btn"
+          aria-label="Generate mock data using AI"
+        >
+          <span aria-hidden="true">✨</span> Generate Data
+        </button>
+      </div>
+        </form>
+      </section>
+
+      <div class="loading" id="loading" role="status" aria-live="polite" aria-hidden="true">
+        <div class="spinner" aria-hidden="true"></div>
+        <p id="loading-text">Generating data...</p>
+      </div>
+
+      <div class="results" id="results" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="results-title" id="results-title">Success!</div>
+        <div class="results-content" id="results-content"></div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    let currentConfig = {
+      variables: [],
+      settings: {},
+      layerCount: 0
+    };
+
+    /**
+     * Sanitize HTML to prevent XSS attacks
+     * @param {string} str - String to sanitize
+     * @returns {string} Sanitized string
+     */
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // Initialize UI with data from plugin
+    window.initializeUI = function(data) {
+      currentConfig = data;
+
+      // Update variable count and list
+      document.getElementById('variable-count').textContent = data.variables.length;
+      document.getElementById('variables-list').textContent =
+        data.variables.length > 0
+          ? data.variables.map(v => `$${v}`).join(', ')
+          : 'No variables detected';
+
+      // Populate form with saved settings
+      document.getElementById('json-keys').value =
+        data.settings.lastKeys.join(', ') || data.variables.join(', ');
+      document.getElementById('prompt').value = data.settings.lastPrompt || '';
+      document.getElementById('endpoint').value = data.settings.endpoint;
+      document.getElementById('model').value = data.settings.model;
+      document.getElementById('temperature').value = data.settings.temperature || 0.7;
+      document.getElementById('top-p').value = data.settings.topP || 0.9;
+    };
+
+    // Toggle advanced settings
+    window.toggleAdvanced = function() {
+      const content = document.getElementById('advanced-content');
+      const button = document.getElementById('advanced-toggle-btn');
+      const isExpanded = content.classList.contains('active');
+
+      content.classList.toggle('active');
+      button.setAttribute('aria-expanded', !isExpanded);
+      content.setAttribute('aria-hidden', isExpanded);
+
+      // Announce to screen readers
+      const announcement = !isExpanded ? 'Advanced settings expanded' : 'Advanced settings collapsed';
+      announceToScreenReader(announcement);
+    };
+
+    // Test connection to Ollama
+    window.testConnection = function() {
+      const endpoint = document.getElementById('endpoint').value;
+      const status = document.getElementById('connection-status');
+
+      status.className = 'connection-status testing';
+
+      window.postMessage('test-connection', endpoint);
+    };
+
+    // Show connection status
+    window.showConnectionStatus = function(result) {
+      const status = document.getElementById('connection-status');
+
+      if (result.success) {
+        status.className = 'connection-status connected';
+        displayMessage(false, `Connected to ${result.endpoint}`, false);
+      } else {
+        status.className = 'connection-status disconnected';
+        displayMessage(true, `Failed to connect to ${result.endpoint}`, false);
+      }
+    };
+
+    // Preview data injection
+    window.previewData = function() {
+      const keys = parseKeys();
+
+      if (!validateForm(keys)) {
+        return;
+      }
+
+      const config = {
+        keys: keys,
+        prompt: document.getElementById('prompt').value
+      };
+
+      window.postMessage('preview', config);
+    };
+
+    // Show preview results
+    window.showPreview = function(preview) {
+      const content = preview.map(item =>
+        `${escapeHtml(item.layerName)}: "${escapeHtml(item.currentValue)}" → "${escapeHtml(item.newValue)}"`
+      ).join('<br>');
+
+      displayMessage(false, `Preview:<br>${content}`, false);
+    };
+
+    // Generate mock data
+    window.generateData = function() {
+      const keys = parseKeys();
+
+      if (!validateForm(keys)) {
+        return;
+      }
+
+      const config = {
+        keys: keys,
+        prompt: document.getElementById('prompt').value,
+        endpoint: document.getElementById('endpoint').value,
+        model: document.getElementById('model').value,
+        temperature: parseFloat(document.getElementById('temperature').value || '0.7'),
+        topP: parseFloat(document.getElementById('top-p').value || '0.9')
+      };
+
+      window.postMessage('generate', config);
+    };
+
+    // Parse keys from input
+    function parseKeys() {
+      const keysInput = document.getElementById('json-keys').value;
+      return keysInput
+        .split(',')
+        .map(k => k.trim())
+        .filter(k => k.length > 0);
+    }
+
+    // Validate form
+    function validateForm(keys) {
+      if (keys.length === 0) {
+        displayMessage(true, 'Please enter at least one JSON key', false);
+        return false;
+      }
+
+      const prompt = document.getElementById('prompt').value.trim();
+      if (!prompt) {
+        displayMessage(true, 'Please enter a context prompt', false);
+        return false;
+      }
+
+      return true;
+    }
+
+    // Announce to screen readers
+    function announceToScreenReader(message) {
+      const announcement = document.createElement('div');
+      announcement.setAttribute('role', 'status');
+      announcement.setAttribute('aria-live', 'polite');
+      announcement.className = 'sr-only';
+      announcement.textContent = message;
+      document.body.appendChild(announcement);
+
+      setTimeout(() => {
+        document.body.removeChild(announcement);
+      }, 1000);
+    }
+
+    // Set loading state
+    window.setLoadingState = function(isLoading, message = 'Generating data...') {
+      const loading = document.getElementById('loading');
+      const btn = document.getElementById('generate-btn');
+      const results = document.getElementById('results');
+
+      if (isLoading) {
+        loading.classList.add('active');
+        loading.setAttribute('aria-hidden', 'false');
+        btn.disabled = true;
+        btn.setAttribute('aria-busy', 'true');
+        results.classList.remove('active');
+        document.getElementById('loading-text').textContent = message;
+        announceToScreenReader(message);
+      } else {
+        loading.classList.remove('active');
+        loading.setAttribute('aria-hidden', 'true');
+        btn.disabled = false;
+        btn.removeAttribute('aria-busy');
+      }
+    };
+
+    // Internal helper to display messages in the results panel
+    // Note: innerHTML is used here for formatted content (line breaks, bold text),
+    // but all user/LLM-generated content is sanitized via escapeHtml() before being
+    // passed to this function, preventing XSS attacks.
+    function displayMessage(isError, content, isActive) {
+      const results = document.getElementById('results');
+      const title = document.getElementById('results-title');
+      const contentEl = document.getElementById('results-content');
+
+      if (isError) {
+        results.className = 'results error';
+        title.textContent = 'Error';
+      } else {
+        results.className = 'results';
+        title.textContent = 'Success!';
+      }
+
+      // Safe to use innerHTML here as all dynamic content has been sanitized
+      contentEl.innerHTML = content;
+
+      if (isActive) {
+        results.classList.add('active');
+      }
+    }
+
+    // Show results
+    window.showResults = function(result) {
+      if (result.success) {
+        const dataEntries = Object.entries(result.data)
+          .map(([k, v]) => `${escapeHtml(k)}: "${escapeHtml(v)}"`)
+          .join('<br>');
+        const content = `
+          <strong>Updated ${result.results.successCount} layer(s)</strong><br><br>
+          <strong>Generated Data:</strong><br>
+          ${dataEntries}
+        `;
+        displayMessage(false, content, true);
+      } else {
+        displayMessage(true, escapeHtml(result.error || 'Unknown error'), true);
+      }
+    };
+
+    // Show error
+    window.showError = function(message) {
+      displayMessage(true, escapeHtml(message), true);
+    };
+
+    // Set up event listeners when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      // Form submission
+      const configForm = document.getElementById('config-form');
+      if (configForm) {
+        configForm.addEventListener('submit', function(event) {
+          event.preventDefault();
+          window.generateData();
+        });
+      }
+
+      // Advanced settings toggle
+      const advancedToggleBtn = document.getElementById('advanced-toggle-btn');
+      if (advancedToggleBtn) {
+        advancedToggleBtn.addEventListener('click', function() {
+          window.toggleAdvanced();
+        });
+      }
+
+      // Test connection button
+      const testConnectionBtn = document.getElementById('test-connection-btn');
+      if (testConnectionBtn) {
+        testConnectionBtn.addEventListener('click', function() {
+          window.testConnection();
+        });
+      }
+
+      // Preview button
+      const previewBtn = document.getElementById('preview-btn');
+      if (previewBtn) {
+        previewBtn.addEventListener('click', function() {
+          window.previewData();
+        });
+      }
+    });
+  </script>
+</body>
+</html>

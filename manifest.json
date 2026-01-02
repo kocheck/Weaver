@@ -1,0 +1,33 @@
+{
+  "name": "LocalMock Data",
+  "description": "Populate Sketch layers with AI-generated mock data using local Ollama LLM",
+  "author": "LocalMock Team",
+  "version": "1.0.0",
+  "identifier": "com.localmock.sketch.plugin",
+  "appcast": "https://raw.githubusercontent.com/kocheck/Weaver/master/.appcast.xml",
+  "compatibleVersion": "70",
+  "bundleVersion": 1,
+  "icon": "icon.png",
+  "commands": [
+    {
+      "name": "Generate Mock Data",
+      "identifier": "generate-mock-data",
+      "script": "src/my-command.js",
+      "handler": "onGenerateMockData",
+      "shortcut": "ctrl shift m"
+    },
+    {
+      "name": "Configure LocalMock",
+      "identifier": "configure-localmock",
+      "script": "src/my-command.js",
+      "handler": "onConfigure"
+    }
+  ],
+  "menu": {
+    "title": "LocalMock Data",
+    "items": [
+      "generate-mock-data",
+      "configure-localmock"
+    ]
+  }
+}
