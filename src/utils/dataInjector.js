@@ -52,7 +52,7 @@ function injectSymbolOverride(layer, overrideInfo, value) {
     return true;
 
   } catch (error) {
-    console.error(`Error injecting symbol override:`, error);
+    console.error('Error injecting symbol override:', error);
     return false;
   }
 }
@@ -89,7 +89,7 @@ export function injectData(layers, data) {
     if (value === undefined || value === null) {
       results.details.push({
         layerName: layer.name,
-        variableName: variableName,
+        variableName,
         status: 'skipped',
         reason: 'No data available'
       });
@@ -112,15 +112,15 @@ export function injectData(layers, data) {
       results.successCount++;
       results.details.push({
         layerName: layer.name,
-        variableName: variableName,
-        value: value,
+        variableName,
+        value,
         status: 'success'
       });
     } else {
       results.failureCount++;
       results.details.push({
         layerName: layer.name,
-        variableName: variableName,
+        variableName,
         status: 'failed',
         reason: 'Injection failed'
       });
@@ -148,7 +148,7 @@ export function previewInjection(layers, data) {
     return {
       layerName: layer.name,
       layerType: type,
-      variableName: variableName,
+      variableName,
       currentValue: type === 'Text' ? layer.text : '(symbol override)',
       newValue: value !== undefined ? String(value) : '(no data)',
       willUpdate: value !== undefined

@@ -78,7 +78,7 @@ export async function generateMockData(config) {
   const llmPrompt = buildPrompt(keys, prompt);
 
   const payload = {
-    model: model,
+    model,
     prompt: llmPrompt,
     format: 'json',
     stream: false,
@@ -96,7 +96,7 @@ export async function generateMockData(config) {
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(payload),
       signal: controller.signal
