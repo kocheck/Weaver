@@ -31,12 +31,6 @@ function sanitizeErrorMessage(errorMessage) {
   // Remove potential API keys or tokens with common prefixes
   // Matches keys like: sk-..., Bearer ..., token_..., api_key_...
   sanitized = sanitized.replace(/\b(sk-|Bearer\s+|token[_-]|api[_-]key[_-])[A-Za-z0-9_-]{16,}\b/gi, '[redacted]');
-  
-  // Also catch standalone long alphanumeric strings that look like tokens (32+ chars)
-  // Note: This is intentionally conservative for security. While it may redact some
-  // legitimate content, it's better to err on the side of caution with error messages
-  // that could potentially contain sensitive data.
-  sanitized = sanitized.replace(/\b[A-Za-z0-9]{32,}\b/g, '[redacted]');
 
   // If the message is empty after sanitization, provide a generic message
   if (!sanitized.trim()) {
@@ -212,7 +206,9 @@ export function onGenerateMockData(context) {
         endpoint: config.endpoint,
         model: config.model,
         lastPrompt: config.prompt,
-        lastKeys: config.keys
+        lastKeys: config.keys,
+        temperature: config.temperature,
+        topP: config.topP
       });
 
       // Show loading state
@@ -225,7 +221,9 @@ export function onGenerateMockData(context) {
         keys: config.keys,
         prompt: config.prompt,
         endpoint: config.endpoint,
-        model: config.model
+        model: config.model,
+        temperature: config.temperature,
+        topP: config.topP
       });
 
       // Inject data into layers
@@ -273,11 +271,13 @@ export function onGenerateMockData(context) {
       );
 
     } catch (error) {
+      const sanitizedMessage = sanitizeErrorMessage(error.message);
+      
       browserWindow.webContents.executeJavaScript(
         `window.showConnectionStatus(${JSON.stringify({
           success: false,
           endpoint: endpoint,
-          error: error.message
+          error: sanitizedMessage
         })})`
       );
     }
