@@ -177,7 +177,10 @@ jobs:
               comment += `✅ No accessibility issues found!\n`;
             }
 
-            comment += `\n[View full report in artifacts](${context.payload.pull_request.html_url}/checks)`;
+            // Only add PR link if we have a pull_request context
+            if (context.payload.pull_request) {
+              comment += `\n[View full report in artifacts](${context.payload.pull_request.html_url}/checks)`;
+            }
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
