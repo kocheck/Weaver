@@ -33,6 +33,9 @@ function sanitizeErrorMessage(errorMessage) {
   sanitized = sanitized.replace(/\b(sk-|Bearer\s+|token[_-]|api[_-]key[_-])[A-Za-z0-9_-]{16,}\b/gi, '[redacted]');
   
   // Also catch standalone long alphanumeric strings that look like tokens (32+ chars)
+  // Note: This is intentionally conservative for security. While it may redact some
+  // legitimate content, it's better to err on the side of caution with error messages
+  // that could potentially contain sensitive data.
   sanitized = sanitized.replace(/\b[A-Za-z0-9]{32,}\b/g, '[redacted]');
 
   // If the message is empty after sanitization, provide a generic message
