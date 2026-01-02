@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Weaver - Weave realistic data into your Sketch designs using local AI. No internet, no API keys, just you and your designs.">
+    <title>Weaver - Local AI for Sketch Designers</title>
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="hero__title">
+                <span class="hero__emoji">🧵</span>
+                Weave AI-Powered Data Into Your Sketch Designs
+            </h1>
+            <p class="hero__subtitle">
+                Generate realistic, contextual mock data using local AI. No internet, no API keys, no cloud—just you, your Mac, and unlimited creativity.
+            </p>
+            <button id="download-btn" class="cta-button" disabled>
+                <span class="cta-button__icon">⬇</span>
+                <span class="cta-button__text">Loading...</span>
+            </button>
+            <p class="hero__note">Works with Sketch 70+ • Powered by Ollama • 100% Private</p>
+        </div>
+    </section>
+
+    <!-- Why Section -->
+    <section class="why">
+        <div class="container">
+            <h2 class="section__title">Why You Need This</h2>
+            <div class="why__grid">
+                <div class="why__card">
+                    <div class="why__icon">🏠</div>
+                    <h3 class="why__card-title">Local-First & Private</h3>
+                    <p class="why__card-text">
+                        Everything runs on your Mac via Ollama. No internet required, no data leaves your computer. Perfect for flights, NDAs, or when you just want privacy.
+                    </p>
+                </div>
+                <div class="why__card">
+                    <div class="why__icon">🎭</div>
+                    <h3 class="why__card-title">Contextual & Realistic</h3>
+                    <p class="why__card-text">
+                        Not just "Lorem ipsum." Generate themed data with natural language prompts—think "cyberpunk noodle bar menu" or "sustainable fashion products."
+                    </p>
+                </div>
+                <div class="why__card">
+                    <div class="why__icon">⚡</div>
+                    <h3 class="why__card-title">Smart Layer Weaving</h3>
+                    <p class="why__card-text">
+                        Name layers with <code>$cardTitle</code> syntax and watch them auto-populate. Works with text layers and symbol overrides. It's like magic, but local.
+                    </p>
+                </div>
+                <div class="why__card">
+                    <div class="why__icon">✈️</div>
+                    <h3 class="why__card-title">Offline-Ready</h3>
+                    <p class="why__card-text">
+                        No internet? No problem. Work from anywhere—coffee shops, airplanes, or your secret underground lair. Your AI travels with you.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how">
+        <div class="container">
+            <h2 class="section__title">See It In Action</h2>
+            <div class="visual-placeholder">
+                <div class="visual-placeholder__content">
+                    <span class="visual-placeholder__icon">🎬</span>
+                    <p class="visual-placeholder__text">
+                        <strong>Add your screenshot or GIF here!</strong><br>
+                        Show off Weaver generating data in a real Sketch file
+                    </p>
+                    <p class="visual-placeholder__hint">
+                        (Replace this placeholder in your repo: add an image or GIF showing the plugin in action)
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quick Example -->
+            <div class="example">
+                <h3 class="example__title">Quick Example</h3>
+                <div class="example__grid">
+                    <div class="example__step">
+                        <div class="example__number">1</div>
+                        <p>Name your layers with <code>$</code> syntax:<br><code>$productName</code>, <code>$price</code></p>
+                    </div>
+                    <div class="example__step">
+                        <div class="example__number">2</div>
+                        <p>Select layers and run Weaver<br><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>M</kbd></p>
+                    </div>
+                    <div class="example__step">
+                        <div class="example__number">3</div>
+                        <p>Enter a prompt:<br>"Eco-friendly fashion products"</p>
+                    </div>
+                    <div class="example__step">
+                        <div class="example__number">4</div>
+                        <p>Hit Generate and watch your layers fill with realistic data ✨</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section class="download">
+        <div class="container">
+            <h2 class="download__title">Ready to Weave?</h2>
+            <p class="download__subtitle">
+                First, make sure you have <a href="https://ollama.com" target="_blank" rel="noopener">Ollama installed</a> on your Mac. Then grab the plugin:
+            </p>
+            <button id="download-btn-2" class="cta-button cta-button--large" disabled>
+                <span class="cta-button__icon">⬇</span>
+                <span class="cta-button__text">Loading...</span>
+            </button>
+            <p class="download__version" id="version-info"></p>
+
+            <div class="download__links">
+                <a href="https://github.com/kocheck/Weaver" target="_blank" rel="noopener" class="link-button">
+                    View on GitHub
+                </a>
+                <a href="https://github.com/kocheck/Weaver#installation" target="_blank" rel="noopener" class="link-button">
+                    Installation Guide
+                </a>
+                <a href="https://github.com/kocheck/Weaver/issues" target="_blank" rel="noopener" class="link-button">
+                    Get Support
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="footer__text">
+                Made with ❤️ for the Sketch community |
+                <a href="https://github.com/kocheck/Weaver" target="_blank" rel="noopener">GitHub</a> |
+                <a href="https://github.com/kocheck/Weaver/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+            </p>
+            <p class="footer__tagline">
+                Local-first, privacy-focused, always offline-ready 🧵
+            </p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
