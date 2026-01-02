@@ -34,7 +34,7 @@
     "@babel/core": "^7.23.0",
     "@babel/preset-env": "^7.23.0",
     "@skpm/builder": "^0.7.11",
-    "@skpm/test-runner": "^0.4.0",
+    "@skpm/test-runner": "^0.5.1",
     "babel-jest": "^29.7.0",
     "eslint": "^8.54.0",
     "htmlhint": "^1.1.4",
