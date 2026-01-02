@@ -4,7 +4,7 @@
   "author": "LocalMock Team",
   "version": "1.0.0",
   "identifier": "com.localmock.sketch.plugin",
-  "appcast": "https://raw.githubusercontent.com/username/localmock-sketch-plugin/master/.appcast.xml",
+  "appcast": "https://raw.githubusercontent.com/kocheck/Weaver/master/.appcast.xml",
   "compatibleVersion": "70",
   "bundleVersion": 1,
   "icon": "icon.png",

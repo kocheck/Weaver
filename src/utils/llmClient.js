@@ -11,6 +11,18 @@ const REQUEST_TIMEOUT = 60000; // 60 seconds
 
 /**
  * Build the prompt for the LLM based on user input
+ * 
+ * This function constructs a carefully crafted prompt that instructs the LLM
+ * to generate valid JSON data without any markdown formatting or explanations.
+ * The prompt engineering strategy focuses on:
+ * 1. Explicitly requesting JSON-only output (no markdown code blocks)
+ * 2. Providing the exact structure the LLM should follow
+ * 3. Giving context to generate realistic, appropriate data
+ * 
+ * This approach is critical for reliability as it reduces the need for
+ * post-processing and parsing of the LLM response, ensuring that the generated
+ * data can be directly injected into Sketch layers.
+ * 
  * @param {Array} keys - Array of JSON keys to generate (e.g., ['title', 'description', 'price'])
  * @param {string} userPrompt - Natural language context (e.g., "Menu items for a noodle bar")
  * @returns {string} Complete prompt for the LLM
@@ -133,7 +145,10 @@ export async function generateMockData(config) {
       throw new Error(`Request timeout after ${REQUEST_TIMEOUT / 1000} seconds. Please check if Ollama is running.`);
     }
 
-    if (error.message.includes('fetch')) {
+    if (
+      error.name === 'TypeError' ||
+      (typeof error.message === 'string' && error.message.toLowerCase().includes('fetch'))
+    ) {
       throw new Error(`Failed to connect to Ollama at ${endpoint}. Please ensure Ollama is running and accessible.`);
     }
 

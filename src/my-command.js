@@ -14,6 +14,74 @@ import { injectData, previewInjection } from './utils/dataInjector';
 const SETTINGS_KEY = 'com.localmock.sketch.settings';
 
 /**
+ * Sanitize error message for user display
+ * Removes potentially sensitive information like file paths, API keys, etc.
+ * @param {string} errorMessage - Raw error message
+ * @returns {string} Sanitized error message
+ */
+function sanitizeErrorMessage(errorMessage) {
+  if (!errorMessage || typeof errorMessage !== 'string') {
+    return 'An unknown error occurred';
+  }
+
+  // Remove file paths (Unix and Windows style)
+  let sanitized = errorMessage.replace(/\/[^\s]+/g, '[path]');
+  sanitized = sanitized.replace(/[A-Z]:\\[^\s]+/g, '[path]');
+
+  // Remove potential API keys or tokens (common patterns)
+  sanitized = sanitized.replace(/\b[A-Za-z0-9]{20,}\b/g, '[redacted]');
+
+  // If the message is empty after sanitization, provide a generic message
+  if (!sanitized.trim()) {
+    return 'An error occurred during the operation';
+  }
+
+  return sanitized;
+}
+
+/**
+ * Validate settings structure and types
+ * @param {*} settings - Settings to validate
+ * @returns {boolean} True if settings are valid
+ */
+function validateSettings(settings) {
+  if (!settings || typeof settings !== 'object') {
+    return false;
+  }
+
+  // Validate endpoint is a string and looks like a URL
+  if (settings.endpoint && typeof settings.endpoint === 'string') {
+    try {
+      new URL(settings.endpoint);
+    } catch {
+      return false;
+    }
+  }
+
+  // Validate model is a string
+  if (settings.model && typeof settings.model !== 'string') {
+    return false;
+  }
+
+  // Validate lastPrompt is a string
+  if (settings.lastPrompt && typeof settings.lastPrompt !== 'string') {
+    return false;
+  }
+
+  // Validate lastKeys is an array of strings
+  if (settings.lastKeys) {
+    if (!Array.isArray(settings.lastKeys)) {
+      return false;
+    }
+    if (!settings.lastKeys.every(key => typeof key === 'string')) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/**
  * Load saved settings from Sketch preferences
  * @returns {Object} Settings object
  */
@@ -27,7 +95,10 @@ function loadSettings() {
 
   try {
     const saved = sketch.Settings.settingForKey(SETTINGS_KEY);
-    return saved ? { ...defaultSettings, ...saved } : defaultSettings;
+    if (saved && validateSettings(saved)) {
+      return { ...defaultSettings, ...saved };
+    }
+    return defaultSettings;
   } catch (error) {
     console.error('Error loading settings:', error);
     return defaultSettings;
@@ -172,11 +243,13 @@ export function onGenerateMockData(context) {
     } catch (error) {
       console.error('Error generating mock data:', error);
 
+      const sanitizedMessage = sanitizeErrorMessage(error.message);
+
       browserWindow.webContents.executeJavaScript(
-        `window.setLoadingState(false); window.showError(${JSON.stringify(error.message)})`
+        `window.setLoadingState(false); window.showError(${JSON.stringify(sanitizedMessage)})`
       );
 
-      showAlert('Generation Failed', error.message, 'error');
+      showAlert('Generation Failed', sanitizedMessage, 'error');
     }
   });
 
