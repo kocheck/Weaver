@@ -6,9 +6,7 @@
     <meta name="description" content="Weaver - Weave realistic data into your Sketch designs using local AI. No internet, no API keys, just you and your designs.">
     <title>Weaver - Local AI for Sketch Designers</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
 </head>
 <body>
     <!-- Hero Section -->
@@ -125,7 +123,7 @@
                 <a href="https://github.com/kocheck/Weaver" target="_blank" rel="noopener" class="link-button">
                     View on GitHub
                 </a>
-                <a href="https://github.com/kocheck/Weaver#-installation" target="_blank" rel="noopener" class="link-button">
+                <a href="https://github.com/kocheck/Weaver#installation" target="_blank" rel="noopener" class="link-button">
                     Installation Guide
                 </a>
                 <a href="https://github.com/kocheck/Weaver/issues" target="_blank" rel="noopener" class="link-button">
@@ -149,71 +147,6 @@
         </div>
     </footer>
 
-    <script>
-        // Fetch the latest release from GitHub
-        async function fetchLatestRelease() {
-            const repoOwner = 'kocheck';
-            const repoName = 'Weaver';
-            const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/releases/latest`;
-
-            try {
-                const response = await fetch(apiUrl);
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch release data');
-                }
-
-                const data = await response.json();
-                const version = data.tag_name || data.name;
-
-                // Find the .sketchplugin asset
-                const asset = data.assets.find(asset => asset.name.endsWith('.sketchplugin'));
-
-                if (!asset) {
-                    throw new Error('No .sketchplugin file found in latest release');
-                }
-
-                const downloadUrl = asset.browser_download_url;
-                const fileName = asset.name;
-
-                // Update both download buttons
-                updateDownloadButton('download-btn', downloadUrl, fileName, version);
-                updateDownloadButton('download-btn-2', downloadUrl, fileName, version);
-
-                // Update version info
-                const versionInfo = document.getElementById('version-info');
-                if (versionInfo) {
-                    versionInfo.textContent = `Latest version: ${version}`;
-                }
-
-            } catch (error) {
-                console.error('Error fetching release:', error);
-
-                // Fallback: Enable buttons with link to releases page
-                const fallbackUrl = `https://github.com/${repoOwner}/${repoName}/releases/latest`;
-                updateDownloadButton('download-btn', fallbackUrl, 'Download Latest Release', null, true);
-                updateDownloadButton('download-btn-2', fallbackUrl, 'Download Latest Release', null, true);
-            }
-        }
-
-        function updateDownloadButton(buttonId, url, fileName, version, isFallback = false) {
-            const button = document.getElementById(buttonId);
-            if (!button) return;
-
-            const textSpan = button.querySelector('.cta-button__text');
-
-            button.disabled = false;
-            button.onclick = () => window.open(url, '_blank');
-
-            if (isFallback) {
-                textSpan.textContent = 'Download Latest Release';
-            } else {
-                textSpan.textContent = `Download ${fileName}`;
-            }
-        }
-
-        // Fetch on page load
-        fetchLatestRelease();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
