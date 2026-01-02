@@ -424,10 +424,9 @@
           <span aria-hidden="true">👁️</span> Preview
         </button>
         <button
-          type="button"
+          type="submit"
           class="btn-primary"
           id="generateBtn"
-          onclick="generateData()"
           aria-label="Generate mock data using AI"
         >
           <span aria-hidden="true">✨</span> Generate Data
@@ -503,10 +502,10 @@
 
       if (result.success) {
         status.className = 'connection-status connected';
-        showResults(false, `Connected to ${result.endpoint}`, false);
+        displayMessage(false, `Connected to ${result.endpoint}`, false);
       } else {
         status.className = 'connection-status disconnected';
-        showResults(true, `Failed to connect to ${result.endpoint}`, false);
+        displayMessage(true, `Failed to connect to ${result.endpoint}`, false);
       }
     };
 
@@ -532,7 +531,7 @@
         `${item.layerName}: "${item.currentValue}" → "${item.newValue}"`
       ).join('<br>');
 
-      showResults(false, `Preview:<br>${content}`, false);
+      displayMessage(false, `Preview:<br>${content}`, false);
     };
 
     // Generate mock data
@@ -565,13 +564,13 @@
     // Validate form
     function validateForm(keys) {
       if (keys.length === 0) {
-        showResults(true, 'Please enter at least one JSON key', false);
+        displayMessage(true, 'Please enter at least one JSON key', false);
         return false;
       }
 
       const prompt = document.getElementById('prompt').value.trim();
       if (!prompt) {
-        showResults(true, 'Please enter a context prompt', false);
+        displayMessage(true, 'Please enter a context prompt', false);
         return false;
       }
 
@@ -614,27 +613,8 @@
       }
     };
 
-    // Show results
-    window.showResults = function(result) {
-      if (result.success) {
-        const content = `
-          <strong>Updated ${result.results.successCount} layer(s)</strong><br><br>
-          <strong>Generated Data:</strong><br>
-          ${Object.entries(result.data).map(([k, v]) => `${k}: "${v}"`).join('<br>')}
-        `;
-        showResults(false, content, true);
-      } else {
-        showResults(true, result.error || 'Unknown error', true);
-      }
-    };
-
-    // Show error
-    window.showError = function(message) {
-      showResults(true, message, true);
-    };
-
-    // Internal show results helper
-    function showResults(isError, content, isActive) {
+    // Internal helper to display messages in the results panel
+    function displayMessage(isError, content, isActive) {
       const results = document.getElementById('results');
       const title = document.getElementById('resultsTitle');
       const contentEl = document.getElementById('resultsContent');
@@ -653,6 +633,25 @@
         results.classList.add('active');
       }
     }
+
+    // Show results
+    window.showResults = function(result) {
+      if (result.success) {
+        const content = `
+          <strong>Updated ${result.results.successCount} layer(s)</strong><br><br>
+          <strong>Generated Data:</strong><br>
+          ${Object.entries(result.data).map(([k, v]) => `${k}: "${v}"`).join('<br>')}
+        `;
+        displayMessage(false, content, true);
+      } else {
+        displayMessage(true, result.error || 'Unknown error', true);
+      }
+    };
+
+    // Show error
+    window.showError = function(message) {
+      displayMessage(true, message, true);
+    };
   </script>
 </body>
 </html>
