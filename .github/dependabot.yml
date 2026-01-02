@@ -13,9 +13,9 @@ updates:
       prefix: "chore"
       include: "scope"
     reviewers:
-      - "localmock-team"
+      - "weaver-team"
     assignees:
-      - "localmock-team"
+      - "weaver-team"
 
   # Enable version updates for GitHub Actions
   - package-ecosystem: "github-actions"
