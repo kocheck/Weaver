@@ -322,9 +322,9 @@
       <section class="section" aria-labelledby="variables-heading">
         <h2 class="section-title" id="variables-heading">
           Detected Variables
-          <span class="badge" id="variableCount" aria-label="Variable count">0</span>
+          <span class="badge" id="variable-count" aria-label="Variable count">0</span>
         </h2>
-        <div class="variables-list" id="variablesList" role="status" aria-live="polite">
+        <div class="variables-list" id="variables-list" role="status" aria-live="polite">
           No variables detected
         </div>
       </section>
@@ -332,18 +332,18 @@
       <section class="section" aria-labelledby="config-heading">
         <h2 class="section-title" id="config-heading">Configuration</h2>
 
-        <form id="configForm" onsubmit="event.preventDefault(); generateData();">
+        <form id="config-form" onsubmit="event.preventDefault(); generateData();">
           <div class="input-group">
             <label for="jsonKeys">JSON Keys (comma-separated)</label>
             <input
               type="text"
-              id="jsonKeys"
+              id="json-keys"
               name="jsonKeys"
               placeholder="e.g., cardTitle, description, price"
-              aria-describedby="jsonKeys-hint"
+              aria-describedby="json-keys-hint"
               required
             />
-            <p class="hint" id="jsonKeys-hint">These will be matched to your layer variable names</p>
+            <p class="hint" id="json-keys-hint">These will be matched to your layer variable names</p>
           </div>
 
           <div class="input-group">
@@ -364,18 +364,18 @@
               class="advanced-toggle"
               onclick="toggleAdvanced()"
               aria-expanded="false"
-              aria-controls="advancedContent"
-              id="advancedToggleBtn"
+              aria-controls="advanced-content"
+              id="advanced-toggle-btn"
             >
               ⚙️ Advanced Settings
             </button>
-            <div class="advanced-content" id="advancedContent" aria-hidden="true">
+            <div class="advanced-content" id="advanced-content" aria-hidden="true">
               <div class="input-group">
                 <label for="endpoint">
                   Ollama Endpoint
                   <span
                     class="connection-status"
-                    id="connectionStatus"
+                    id="connection-status"
                     role="status"
                     aria-label="Connection status"
                   ></span>
@@ -425,7 +425,7 @@
         <button
           type="submit"
           class="btn-primary"
-          id="generateBtn"
+          id="generate-btn"
           aria-label="Generate mock data using AI"
         >
           <span aria-hidden="true">✨</span> Generate Data
@@ -436,12 +436,12 @@
 
       <div class="loading" id="loading" role="status" aria-live="polite" aria-hidden="true">
         <div class="spinner" aria-hidden="true"></div>
-        <p id="loadingText">Generating data...</p>
+        <p id="loading-text">Generating data...</p>
       </div>
 
       <div class="results" id="results" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="results-title" id="resultsTitle">Success!</div>
-        <div class="results-content" id="resultsContent"></div>
+        <div class="results-title" id="results-title">Success!</div>
+        <div class="results-content" id="results-content"></div>
       </div>
     </main>
   </div>
@@ -473,14 +473,14 @@
       currentConfig = data;
 
       // Update variable count and list
-      document.getElementById('variableCount').textContent = data.variables.length;
-      document.getElementById('variablesList').textContent =
+      document.getElementById('variable-count').textContent = data.variables.length;
+      document.getElementById('variables-list').textContent =
         data.variables.length > 0
           ? data.variables.map(v => `$${v}`).join(', ')
           : 'No variables detected';
 
       // Populate form with saved settings
-      document.getElementById('jsonKeys').value =
+      document.getElementById('json-keys').value =
         data.settings.lastKeys.join(', ') || data.variables.join(', ');
       document.getElementById('prompt').value = data.settings.lastPrompt || '';
       document.getElementById('endpoint').value = data.settings.endpoint;
@@ -489,8 +489,8 @@
 
     // Toggle advanced settings
     window.toggleAdvanced = function() {
-      const content = document.getElementById('advancedContent');
-      const button = document.getElementById('advancedToggleBtn');
+      const content = document.getElementById('advanced-content');
+      const button = document.getElementById('advanced-toggle-btn');
       const isExpanded = content.classList.contains('active');
 
       content.classList.toggle('active');
@@ -505,7 +505,7 @@
     // Test connection to Ollama
     window.testConnection = function() {
       const endpoint = document.getElementById('endpoint').value;
-      const status = document.getElementById('connectionStatus');
+      const status = document.getElementById('connection-status');
 
       status.className = 'connection-status testing';
 
@@ -514,7 +514,7 @@
 
     // Show connection status
     window.showConnectionStatus = function(result) {
-      const status = document.getElementById('connectionStatus');
+      const status = document.getElementById('connection-status');
 
       if (result.success) {
         status.className = 'connection-status connected';
@@ -570,7 +570,7 @@
 
     // Parse keys from input
     function parseKeys() {
-      const keysInput = document.getElementById('jsonKeys').value;
+      const keysInput = document.getElementById('json-keys').value;
       return keysInput
         .split(',')
         .map(k => k.trim())
@@ -610,7 +610,7 @@
     // Set loading state
     window.setLoadingState = function(isLoading, message = 'Generating data...') {
       const loading = document.getElementById('loading');
-      const btn = document.getElementById('generateBtn');
+      const btn = document.getElementById('generate-btn');
       const results = document.getElementById('results');
 
       if (isLoading) {
@@ -619,7 +619,7 @@
         btn.disabled = true;
         btn.setAttribute('aria-busy', 'true');
         results.classList.remove('active');
-        document.getElementById('loadingText').textContent = message;
+        document.getElementById('loading-text').textContent = message;
         announceToScreenReader(message);
       } else {
         loading.classList.remove('active');
@@ -635,8 +635,8 @@
     // passed to this function, preventing XSS attacks.
     function displayMessage(isError, content, isActive) {
       const results = document.getElementById('results');
-      const title = document.getElementById('resultsTitle');
-      const contentEl = document.getElementById('resultsContent');
+      const title = document.getElementById('results-title');
+      const contentEl = document.getElementById('results-content');
 
       if (isError) {
         results.className = 'results error';
