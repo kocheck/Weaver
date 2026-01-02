@@ -97,6 +97,7 @@
     }
 
     input[type="text"]:focus,
+    input[type="url"]:focus,
     textarea:focus,
     select:focus,
     button:focus {
@@ -411,8 +412,6 @@
               </div>
             </div>
           </div>
-        </form>
-      </section>
 
       <div class="button-group" role="group" aria-label="Action buttons">
         <button
@@ -432,6 +431,8 @@
           <span aria-hidden="true">✨</span> Generate Data
         </button>
       </div>
+        </form>
+      </section>
 
       <div class="loading" id="loading" role="status" aria-live="polite" aria-hidden="true">
         <div class="spinner" aria-hidden="true"></div>
@@ -451,6 +452,21 @@
       settings: {},
       layerCount: 0
     };
+
+    /**
+     * Sanitize HTML to prevent XSS attacks
+     * @param {string} str - String to sanitize
+     * @returns {string} Sanitized string
+     */
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
 
     // Initialize UI with data from plugin
     window.initializeUI = function(data) {
@@ -528,7 +544,7 @@
     // Show preview results
     window.showPreview = function(preview) {
       const content = preview.map(item =>
-        `${item.layerName}: "${item.currentValue}" → "${item.newValue}"`
+        `${escapeHtml(item.layerName)}: "${escapeHtml(item.currentValue)}" → "${escapeHtml(item.newValue)}"`
       ).join('<br>');
 
       displayMessage(false, `Preview:<br>${content}`, false);
@@ -614,6 +630,9 @@
     };
 
     // Internal helper to display messages in the results panel
+    // Note: innerHTML is used here for formatted content (line breaks, bold text),
+    // but all user/LLM-generated content is sanitized via escapeHtml() before being
+    // passed to this function, preventing XSS attacks.
     function displayMessage(isError, content, isActive) {
       const results = document.getElementById('results');
       const title = document.getElementById('resultsTitle');
@@ -627,6 +646,7 @@
         title.textContent = 'Success!';
       }
 
+      // Safe to use innerHTML here as all dynamic content has been sanitized
       contentEl.innerHTML = content;
 
       if (isActive) {
@@ -637,20 +657,23 @@
     // Show results
     window.showResults = function(result) {
       if (result.success) {
+        const dataEntries = Object.entries(result.data)
+          .map(([k, v]) => `${escapeHtml(k)}: "${escapeHtml(v)}"`)
+          .join('<br>');
         const content = `
           <strong>Updated ${result.results.successCount} layer(s)</strong><br><br>
           <strong>Generated Data:</strong><br>
-          ${Object.entries(result.data).map(([k, v]) => `${k}: "${v}"`).join('<br>')}
+          ${dataEntries}
         `;
         displayMessage(false, content, true);
       } else {
-        displayMessage(true, result.error || 'Unknown error', true);
+        displayMessage(true, escapeHtml(result.error || 'Unknown error'), true);
       }
     };
 
     // Show error
     window.showError = function(message) {
-      displayMessage(true, message, true);
+      displayMessage(true, escapeHtml(message), true);
     };
   </script>
 </body>

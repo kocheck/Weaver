@@ -112,10 +112,14 @@ export function validateLayers(layers) {
     };
   }
 
+  // Extract unique variable names from the already-found layers
+  const uniqueNames = new Set(variableLayers.map(item => item.variableName));
+  const variables = Array.from(uniqueNames);
+
   return {
     isValid: true,
     message: `Found ${variableLayers.length} variable layer(s).`,
     count: variableLayers.length,
-    variables: extractVariableNames(layers)
+    variables: variables
   };
 }

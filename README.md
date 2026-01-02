@@ -357,8 +357,8 @@ MIT License - see [LICENSE](LICENSE) file for details
 
 ## 📧 Support
 
-- **Issues:** [GitHub Issues](https://github.com/username/localmock-sketch-plugin/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/username/localmock-sketch-plugin/discussions)
+- **Issues:** [GitHub Issues](https://github.com/kocheck/Weaver/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/kocheck/Weaver/discussions)
 
 ## 🗺️ Roadmap
 
