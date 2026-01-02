@@ -5,6 +5,9 @@
  * JSON-formatted mock data based on user-defined structure and prompts.
  */
 
+// Import AbortController polyfill for Sketch environment
+import './abortControllerPolyfill';
+
 const DEFAULT_ENDPOINT = 'http://localhost:11434/api/generate';
 const DEFAULT_MODEL = 'llama3';
 const REQUEST_TIMEOUT = 60000; // 60 seconds
