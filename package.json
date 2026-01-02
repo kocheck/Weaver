@@ -4,16 +4,16 @@
   "description": "A Sketch plugin to populate layers with LLM-generated mock data using local Ollama",
   "main": "src/my-command.js",
   "scripts": {
-    "build": "skpm build",
-    "watch": "skpm build --watch",
+    "build": "skpm-build",
+    "watch": "skpm-build --watch",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "lint": "eslint src/**/*.js __tests__/**/*.js",
     "lint:fix": "eslint src/**/*.js __tests__/**/*.js --fix",
     "lint:html": "htmlhint src/**/*.html",
-    "link": "skpm link",
-    "unlink": "skpm unlink",
+    "link": "skpm-link",
+    "unlink": "skpm-link --remove",
     "publish": "skpm publish"
   },
   "engines": {
