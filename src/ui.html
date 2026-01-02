@@ -630,6 +630,9 @@
     };
 
     // Internal helper to display messages in the results panel
+    // Note: innerHTML is used here for formatted content (line breaks, bold text),
+    // but all user/LLM-generated content is sanitized via escapeHtml() before being
+    // passed to this function, preventing XSS attacks.
     function displayMessage(isError, content, isActive) {
       const results = document.getElementById('results');
       const title = document.getElementById('resultsTitle');
@@ -643,6 +646,7 @@
         title.textContent = 'Success!';
       }
 
+      // Safe to use innerHTML here as all dynamic content has been sanitized
       contentEl.innerHTML = content;
 
       if (isActive) {

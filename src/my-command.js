@@ -28,8 +28,12 @@ function sanitizeErrorMessage(errorMessage) {
   let sanitized = errorMessage.replace(/\/[^\s]+/g, '[path]');
   sanitized = sanitized.replace(/[A-Z]:\\[^\s]+/g, '[path]');
 
-  // Remove potential API keys or tokens (common patterns)
-  sanitized = sanitized.replace(/\b[A-Za-z0-9]{20,}\b/g, '[redacted]');
+  // Remove potential API keys or tokens with common prefixes
+  // Matches keys like: sk-..., Bearer ..., token_..., api_key_...
+  sanitized = sanitized.replace(/\b(sk-|Bearer\s+|token[_-]|api[_-]key[_-])[A-Za-z0-9_-]{16,}\b/gi, '[redacted]');
+  
+  // Also catch standalone long alphanumeric strings that look like tokens (32+ chars)
+  sanitized = sanitized.replace(/\b[A-Za-z0-9]{32,}\b/g, '[redacted]');
 
   // If the message is empty after sanitization, provide a generic message
   if (!sanitized.trim()) {
