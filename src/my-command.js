@@ -228,7 +228,6 @@ export function onGenerateMockData(context) {
  * Configuration command: Open settings panel
  */
 export function onConfigure(context) {
-  const settings = loadSettings();
   const UI = require('sketch/ui');
 
   UI.message('Settings loaded. Use "Generate Mock Data" command to configure per-generation settings.');

@@ -26,7 +26,7 @@ Before installing the plugin, you need to have Ollama installed and running:
 ### Install Ollama
 
 1. **Download Ollama:**
-   - Visit [https://ollama.ai](https://ollama.ai)
+   - Visit [https://ollama.com](https://ollama.com)
    - Download for your operating system (macOS, Linux, Windows)
 
 2. **Install Llama 3:**

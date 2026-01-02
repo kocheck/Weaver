@@ -82,7 +82,7 @@ export function injectData(layers, data) {
 
   // Iterate through each variable layer and inject data
   variableLayers.forEach(item => {
-    const { layer, variableName, type, override } = item;
+    const { layer, variableName, type } = item;
     const value = data[variableName];
 
     // Skip if no data available for this variable
