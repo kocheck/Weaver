@@ -12,14 +12,14 @@
     {
       "name": "Generate Mock Data",
       "identifier": "generate-mock-data",
-      "script": "my-command.js",
+      "script": "src/my-command.js",
       "handler": "onGenerateMockData",
       "shortcut": "ctrl shift m"
     },
     {
       "name": "Configure LocalMock",
       "identifier": "configure-localmock",
-      "script": "my-command.js",
+      "script": "src/my-command.js",
       "handler": "onConfigure"
     }
   ],

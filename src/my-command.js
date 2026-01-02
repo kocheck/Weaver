@@ -188,7 +188,7 @@ export function onGenerateMockData(context) {
   const browserWindow = new BrowserWindow(options);
 
   // Load the UI HTML file
-  browserWindow.loadURL(require('../ui.html'));
+  browserWindow.loadURL(require('./ui.html'));
 
   // Handle messages from the WebView
   browserWindow.webContents.on('did-finish-load', () => {
