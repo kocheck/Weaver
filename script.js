@@ -76,7 +76,7 @@ function updateDownloadButton(buttonId, url, fileName, version, isFallback = fal
     if (!element) return;
 
     // If the element is a <button>, replace it with an <a> to use proper link semantics.
-    if (element.tagName && element.tagName.toLowerCase() === 'button') {
+    if (element.tagName.toLowerCase() === 'button') {
         const link = document.createElement('a');
         link.id = element.id;
         link.className = element.className;
