@@ -8,6 +8,7 @@
 const DEFAULT_ENDPOINT = 'http://localhost:11434/api/generate';
 const DEFAULT_MODEL = 'llama3';
 const REQUEST_TIMEOUT = 60000; // 60 seconds
+const CONNECTION_TEST_TIMEOUT = 5000; // 5 seconds
 
 /**
  * Build the prompt for the LLM based on user input
@@ -56,6 +57,8 @@ OUTPUT (JSON only):`;
  * @param {string} config.prompt - User's natural language prompt
  * @param {string} config.endpoint - Ollama API endpoint (optional)
  * @param {string} config.model - Model name (optional)
+ * @param {number} config.temperature - Temperature for generation (optional, default: 0.7)
+ * @param {number} config.topP - Top P for nucleus sampling (optional, default: 0.9)
  * @returns {Promise<Object>} Parsed JSON response
  */
 export async function generateMockData(config) {
@@ -63,7 +66,9 @@ export async function generateMockData(config) {
     keys,
     prompt,
     endpoint = DEFAULT_ENDPOINT,
-    model = DEFAULT_MODEL
+    model = DEFAULT_MODEL,
+    temperature = 0.7,
+    topP = 0.9
   } = config;
 
   // Validate inputs
@@ -83,8 +88,8 @@ export async function generateMockData(config) {
     format: 'json',
     stream: false,
     options: {
-      temperature: 0.7,
-      top_p: 0.9
+      temperature,
+      top_p: topP
     }
   };
 
@@ -163,7 +168,7 @@ export async function generateMockData(config) {
  */
 export async function testConnection(endpoint = DEFAULT_ENDPOINT) {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 5000);
+  const timeoutId = setTimeout(() => controller.abort(), CONNECTION_TEST_TIMEOUT);
 
   try {
     const response = await fetch(endpoint.replace('/api/generate', '/api/tags'), {
