@@ -88,11 +88,11 @@ export async function generateMockData(config) {
     }
   };
 
-  try {
-    // Create abort controller for timeout
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
+  // Create abort controller for timeout
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
+  try {
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
@@ -101,8 +101,6 @@ export async function generateMockData(config) {
       body: JSON.stringify(payload),
       signal: controller.signal
     });
-
-    clearTimeout(timeoutId);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -153,6 +151,8 @@ export async function generateMockData(config) {
     }
 
     throw error;
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
@@ -162,19 +162,20 @@ export async function generateMockData(config) {
  * @returns {Promise<boolean>} True if connection successful
  */
 export async function testConnection(endpoint = DEFAULT_ENDPOINT) {
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
 
+  try {
     const response = await fetch(endpoint.replace('/api/generate', '/api/tags'), {
       method: 'GET',
       signal: controller.signal
     });
 
-    clearTimeout(timeoutId);
     return response.ok;
   } catch (error) {
     return false;
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 

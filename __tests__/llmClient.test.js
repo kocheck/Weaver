@@ -123,24 +123,17 @@ describe('LLM Client', () => {
     });
 
     it('should handle timeout', async () => {
-      // Mock a delayed response
+      // Mock fetch to simulate an abort error
       global.fetch.mockImplementationOnce(() =>
-        new Promise(() => {}) // Never resolves
+        Promise.reject(Object.assign(new Error('The operation was aborted'), { name: 'AbortError' }))
       );
 
-      const promise = generateMockData({
-        keys: ['title'],
-        prompt: 'Test'
-      });
-
-      // Fast-forward time
-      jest.useFakeTimers();
-      setTimeout(() => {
-        jest.advanceTimersByTime(61000);
-      }, 0);
-
-      await expect(promise).rejects.toThrow();
-      jest.useRealTimers();
+      await expect(
+        generateMockData({
+          keys: ['title'],
+          prompt: 'Test'
+        })
+      ).rejects.toThrow('Request timeout');
     });
 
     it('should use custom endpoint and model', async () => {

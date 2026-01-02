@@ -12,7 +12,7 @@
  * @returns {boolean} True if the layer name is a variable
  */
 export function isVariableLayer(name) {
-  return name && typeof name === 'string' && name.startsWith('$');
+  return !!(name && typeof name === 'string' && name.startsWith('$'));
 }
 
 /**
