@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LocalMock Data Generator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 24px;
+    }
+
+    .section {
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      background: #667eea;
+      color: white;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #555;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    .variables-list {
+      background: #f5f5f5;
+      padding: 12px;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .results {
+      display: none;
+      margin-top: 20px;
+      padding: 16px;
+      background: #e8f5e9;
+      border-left: 4px solid #4caf50;
+      border-radius: 6px;
+    }
+
+    .results.active {
+      display: block;
+    }
+
+    .results.error {
+      background: #ffebee;
+      border-left-color: #f44336;
+    }
+
+    .results-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #2e7d32;
+    }
+
+    .results.error .results-title {
+      color: #c62828;
+    }
+
+    .results-content {
+      font-size: 13px;
+      color: #555;
+    }
+
+    .advanced {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .advanced-toggle {
+      background: none;
+      border: none;
+      color: #667eea;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+    }
+
+    .advanced-content {
+      display: none;
+      margin-top: 12px;
+    }
+
+    .advanced-content.active {
+      display: block;
+    }
+
+    .connection-status {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-left: 8px;
+    }
+
+    .connection-status.connected {
+      background: #4caf50;
+    }
+
+    .connection-status.disconnected {
+      background: #f44336;
+    }
+
+    .connection-status.testing {
+      background: #ff9800;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎨 LocalMock Data</h1>
+      <p>Generate realistic mock data using local AI</p>
+    </div>
+
+    <div class="content">
+      <div class="section">
+        <div class="section-title">
+          Detected Variables
+          <span class="badge" id="variableCount">0</span>
+        </div>
+        <div class="variables-list" id="variablesList">
+          No variables detected
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Configuration</div>
+
+        <div class="input-group">
+          <label for="jsonKeys">JSON Keys (comma-separated)</label>
+          <input
+            type="text"
+            id="jsonKeys"
+            placeholder="e.g., cardTitle, description, price"
+          />
+          <p class="hint">These will be matched to your layer variable names</p>
+        </div>
+
+        <div class="input-group">
+          <label for="prompt">Context Prompt</label>
+          <textarea
+            id="prompt"
+            placeholder="e.g., Menu items for a cyberpunk noodle bar in Tokyo"
+          ></textarea>
+          <p class="hint">Describe what kind of data you want to generate</p>
+        </div>
+
+        <div class="advanced">
+          <button class="advanced-toggle" onclick="toggleAdvanced()">
+            ⚙️ Advanced Settings
+          </button>
+          <div class="advanced-content" id="advancedContent">
+            <div class="input-group">
+              <label for="endpoint">
+                Ollama Endpoint
+                <span class="connection-status" id="connectionStatus"></span>
+              </label>
+              <input
+                type="text"
+                id="endpoint"
+                value="http://localhost:11434/api/generate"
+              />
+              <button class="btn-secondary" style="margin-top: 8px;" onclick="testConnection()">
+                Test Connection
+              </button>
+            </div>
+
+            <div class="input-group">
+              <label for="model">Model</label>
+              <input
+                type="text"
+                id="model"
+                value="llama3"
+              />
+              <p class="hint">Default: llama3</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button class="btn-secondary" onclick="previewData()">
+          👁️ Preview
+        </button>
+        <button class="btn-primary" id="generateBtn" onclick="generateData()">
+          ✨ Generate Data
+        </button>
+      </div>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p id="loadingText">Generating data...</p>
+      </div>
+
+      <div class="results" id="results">
+        <div class="results-title" id="resultsTitle">Success!</div>
+        <div class="results-content" id="resultsContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentConfig = {
+      variables: [],
+      settings: {},
+      layerCount: 0
+    };
+
+    // Initialize UI with data from plugin
+    window.initializeUI = function(data) {
+      currentConfig = data;
+
+      // Update variable count and list
+      document.getElementById('variableCount').textContent = data.variables.length;
+      document.getElementById('variablesList').textContent =
+        data.variables.length > 0
+          ? data.variables.map(v => `$${v}`).join(', ')
+          : 'No variables detected';
+
+      // Populate form with saved settings
+      document.getElementById('jsonKeys').value =
+        data.settings.lastKeys.join(', ') || data.variables.join(', ');
+      document.getElementById('prompt').value = data.settings.lastPrompt || '';
+      document.getElementById('endpoint').value = data.settings.endpoint;
+      document.getElementById('model').value = data.settings.model;
+    };
+
+    // Toggle advanced settings
+    window.toggleAdvanced = function() {
+      const content = document.getElementById('advancedContent');
+      content.classList.toggle('active');
+    };
+
+    // Test connection to Ollama
+    window.testConnection = function() {
+      const endpoint = document.getElementById('endpoint').value;
+      const status = document.getElementById('connectionStatus');
+
+      status.className = 'connection-status testing';
+
+      window.postMessage('test-connection', endpoint);
+    };
+
+    // Show connection status
+    window.showConnectionStatus = function(result) {
+      const status = document.getElementById('connectionStatus');
+
+      if (result.success) {
+        status.className = 'connection-status connected';
+        showResults(false, `Connected to ${result.endpoint}`, false);
+      } else {
+        status.className = 'connection-status disconnected';
+        showResults(true, `Failed to connect to ${result.endpoint}`, false);
+      }
+    };
+
+    // Preview data injection
+    window.previewData = function() {
+      const keys = parseKeys();
+
+      if (!validateForm(keys)) {
+        return;
+      }
+
+      const config = {
+        keys: keys,
+        prompt: document.getElementById('prompt').value
+      };
+
+      window.postMessage('preview', config);
+    };
+
+    // Show preview results
+    window.showPreview = function(preview) {
+      const content = preview.map(item =>
+        `${item.layerName}: "${item.currentValue}" → "${item.newValue}"`
+      ).join('<br>');
+
+      showResults(false, `Preview:<br>${content}`, false);
+    };
+
+    // Generate mock data
+    window.generateData = function() {
+      const keys = parseKeys();
+
+      if (!validateForm(keys)) {
+        return;
+      }
+
+      const config = {
+        keys: keys,
+        prompt: document.getElementById('prompt').value,
+        endpoint: document.getElementById('endpoint').value,
+        model: document.getElementById('model').value
+      };
+
+      window.postMessage('generate', config);
+    };
+
+    // Parse keys from input
+    function parseKeys() {
+      const keysInput = document.getElementById('jsonKeys').value;
+      return keysInput
+        .split(',')
+        .map(k => k.trim())
+        .filter(k => k.length > 0);
+    }
+
+    // Validate form
+    function validateForm(keys) {
+      if (keys.length === 0) {
+        showResults(true, 'Please enter at least one JSON key', false);
+        return false;
+      }
+
+      const prompt = document.getElementById('prompt').value.trim();
+      if (!prompt) {
+        showResults(true, 'Please enter a context prompt', false);
+        return false;
+      }
+
+      return true;
+    }
+
+    // Set loading state
+    window.setLoadingState = function(isLoading, message = 'Generating data...') {
+      const loading = document.getElementById('loading');
+      const btn = document.getElementById('generateBtn');
+      const results = document.getElementById('results');
+
+      if (isLoading) {
+        loading.classList.add('active');
+        btn.disabled = true;
+        results.classList.remove('active');
+        document.getElementById('loadingText').textContent = message;
+      } else {
+        loading.classList.remove('active');
+        btn.disabled = false;
+      }
+    };
+
+    // Show results
+    window.showResults = function(result) {
+      if (result.success) {
+        const content = `
+          <strong>Updated ${result.results.successCount} layer(s)</strong><br><br>
+          <strong>Generated Data:</strong><br>
+          ${Object.entries(result.data).map(([k, v]) => `${k}: "${v}"`).join('<br>')}
+        `;
+        showResults(false, content, true);
+      } else {
+        showResults(true, result.error || 'Unknown error', true);
+      }
+    };
+
+    // Show error
+    window.showError = function(message) {
+      showResults(true, message, true);
+    };
+
+    // Internal show results helper
+    function showResults(isError, content, isActive) {
+      const results = document.getElementById('results');
+      const title = document.getElementById('resultsTitle');
+      const contentEl = document.getElementById('resultsContent');
+
+      if (isError) {
+        results.className = 'results error';
+        title.textContent = 'Error';
+      } else {
+        results.className = 'results';
+        title.textContent = 'Success!';
+      }
+
+      contentEl.innerHTML = content;
+
+      if (isActive) {
+        results.classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>
