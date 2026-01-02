@@ -40,7 +40,7 @@ export function findVariableLayers(layers, results = []) {
     // Check if this layer is a variable layer
     if (isVariableLayer(layer.name)) {
       results.push({
-        layer: layer,
+        layer,
         variableName: extractVariableName(layer.name),
         type: layer.type
       });
@@ -51,10 +51,10 @@ export function findVariableLayers(layers, results = []) {
       layer.overrides.forEach(override => {
         if (override.affectedLayer && isVariableLayer(override.affectedLayer.name)) {
           results.push({
-            layer: layer,
+            layer,
             variableName: extractVariableName(override.affectedLayer.name),
             type: 'SymbolOverride',
-            override: override,
+            override,
             overrideId: override.id
           });
         }
@@ -120,6 +120,6 @@ export function validateLayers(layers) {
     isValid: true,
     message: `Found ${variableLayers.length} variable layer(s).`,
     count: variableLayers.length,
-    variables: variables
+    variables
   };
 }
