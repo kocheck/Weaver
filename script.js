@@ -58,7 +58,7 @@ async function fetchLatestRelease() {
         console.error('Error fetching release:', error);
 
         // Provide helpful error message for rate limiting
-        const isRateLimited = error.message && error.message.includes('403');
+        const isRateLimited = error.message && (error.message.includes('403') || error.message.includes('rate limit'));
         const fallbackUrl = `https://github.com/${repoOwner}/${repoName}/releases/latest`;
         
         if (isRateLimited) {
