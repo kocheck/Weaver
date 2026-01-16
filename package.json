@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.23.0",
-    "@babel/preset-env": "^7.23.0",
+    "@babel/preset-env": "^7.28.6",
     "@skpm/builder": "^0.9.5",
     "@skpm/test-runner": "^0.5.1",
     "babel-jest": "^29.7.0",
