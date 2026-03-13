@@ -28,7 +28,7 @@
     ]
   },
   "dependencies": {
-    "sketch-module-web-view": "^3.3.1"
+    "sketch-module-web-view": "^3.5.3"
   },
   "devDependencies": {
     "@babel/core": "^7.23.0",
